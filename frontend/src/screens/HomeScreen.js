@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import icon from '../folder.svg'
+import Moment from 'react-moment'
+import moment from 'moment'
 import {
   listDocument,
   createDocument,
@@ -201,7 +203,11 @@ const HomeScreen = () => {
                           to={`/${patient._id}`}
                           className='btn btn-light btn-sm '
                         >
-                          {patient.createdAt.slice(0, 10)}
+                          {
+                            <Moment format='YYYY-MM-DD HH:mm:ss'>
+                              {moment(patient.createdAt)}
+                            </Moment>
+                          }
                         </Link>
                         {userInfo && userInfo.isAdmin && (
                           <button

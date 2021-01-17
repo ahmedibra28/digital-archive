@@ -52,10 +52,10 @@ const UserLogHistoryScreen = () => {
                   currentItems.map((log) => (
                     <tr key={log._id}>
                       <td>{log._id}</td>
-                      <td>{log.user.name}</td>
+                      <td>{log.user && log.user.name}</td>
                       <td>
-                        <a href={`mailto:${log.user.email}`}>
-                          {log.user.email}
+                        <a href={`mailto:${log.user && log.user.email}`}>
+                          {log.user && log.user.email}
                         </a>
                       </td>
                       <td>

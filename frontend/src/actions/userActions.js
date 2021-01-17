@@ -57,11 +57,22 @@ export const login = (email, password) => async (dispatch) => {
   }
 }
 
-export const getLogHistory = () => async (dispatch) => {
+export const getLogHistory = () => async (dispatch, getState) => {
   try {
     dispatch({ type: USER_LOG_HISTORY_REQUEST })
 
-    const { data } = await axios.get(`/api/users/log`)
+    const {
+      userLogin: { userInfo },
+    } = getState()
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    }
+
+    const { data } = await axios.get(`/api/users/log`, config)
 
     dispatch({ type: USER_LOG_HISTORY_SUCCESS, payload: data })
   } catch (error) {
