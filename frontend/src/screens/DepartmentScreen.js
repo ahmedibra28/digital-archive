@@ -11,6 +11,7 @@ import {
   updateDepartment,
   deleteDepartment,
 } from '../actions/departmentActions'
+import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa'
 import { confirmAlert } from 'react-confirm-alert'
 import { Confirm } from '../components/Confirm'
 
@@ -183,7 +184,7 @@ const DepartmentScreen = () => {
           data-bs-target='#departmentModal'
         >
           {' '}
-          <i className='fas fa-plus'></i> REGISTER NEW DEPARTMENT
+          <FaPlus /> REGISTER NEW DEPARTMENT
         </button>
       </div>
 
@@ -229,14 +230,14 @@ const DepartmentScreen = () => {
                           data-bs-toggle='modal'
                           data-bs-target='#departmentModal'
                         >
-                          <i className='fas fa-edit'></i> Edit
+                          <FaEdit /> Edit
                         </button>
                         {userInfo && userInfo.isAdmin && (
                           <button
                             className='btn btn-danger btn-sm'
                             onClick={() => deleteHandler(dep._id)}
                           >
-                            <i className='fas fa-trash'></i> Delete
+                            <FaTrash /> Delete
                           </button>
                         )}
                       </td>

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import pdfIcon from '../pdf.svg'
 import Moment from 'react-moment'
 import moment from 'moment'
+import { FaDownload, FaPlus, FaTrash } from 'react-icons/fa'
 import {
   listDocument,
   createDocumentFile,
@@ -18,7 +18,6 @@ import { Confirm } from '../components/Confirm'
 
 const DocumentFileScreen = ({ match }) => {
   const [file, setFile] = useState('')
-  const [title, setTitle] = useState('')
   const [department, setDepartment] = useState('')
 
   const dispatch = useDispatch()
@@ -48,7 +47,6 @@ const DocumentFileScreen = ({ match }) => {
   const formCleanHandler = () => {
     setFile('')
     setDepartment('')
-    setTitle('')
   }
 
   useEffect(() => {
@@ -69,7 +67,6 @@ const DocumentFileScreen = ({ match }) => {
     e.preventDefault()
 
     const formData = new FormData()
-    formData.append('title', title)
     formData.append('department', department)
     formData.append('file', file)
 
@@ -118,23 +115,11 @@ const DocumentFileScreen = ({ match }) => {
                 <Message variant='danger'>{error}</Message>
               ) : (
                 <form onSubmit={submitHandler}>
-                  <div className='form-group'>
-                    <label htmlFor='title'>Title</label>
-                    <input
-                      type='text'
-                      placeholder='Enter document title'
-                      className='form-control'
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      required
-                    />
-                  </div>
-
                   {documentLoading ? (
                     <Loader />
                   ) : (
                     <div className='form-group'>
-                      <label htmlFor='title'>Department</label>
+                      <label htmlFor='department'>Department</label>
                       <select
                         name='department'
                         value={department}
@@ -196,7 +181,7 @@ const DocumentFileScreen = ({ match }) => {
           data-bs-toggle='modal'
           data-bs-target='#editDocumentModal'
         >
-          <i className='fas fa-plus'></i> ADD NEW PATIENT DOCUMENT
+          <FaPlus /> ADD NEW PATIENT DOCUMENT
         </button>
       </div>
 
@@ -238,11 +223,10 @@ const DocumentFileScreen = ({ match }) => {
                                 {document.patient_name}
                               </button>
                               <button className='btn btn-light btn-sm'>
-                                {file.department && file.department.name}
+                                {document.department &&
+                                  document.department.name}
                               </button>
-                              <button className='btn btn-light btn-sm'>
-                                {file.title}
-                              </button>
+
                               <button className='btn btn-light btn-sm '>
                                 <Moment format='YYYY-MM-DD HH:mm:ss'>
                                   {moment(file.createdAt)}
@@ -253,14 +237,14 @@ const DocumentFileScreen = ({ match }) => {
                                 target='blank'
                                 className='btn btn-success btn-sm'
                               >
-                                <i className='fa fa-download'></i> Download
+                                <FaDownload /> Download
                               </a>
                               {userInfo && userInfo.isAdmin && (
                                 <button
                                   className='btn btn-danger btn-sm'
                                   onClick={() => deleteHandler(file)}
                                 >
-                                  <i className='fa fa-trash'></i> Delete
+                                  <FaTrash /> Delete
                                 </button>
                               )}
                             </div>

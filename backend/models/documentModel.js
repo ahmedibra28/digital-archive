@@ -15,25 +15,16 @@ const documentScheme = mongoose.Schema(
       type: String,
       required: true,
     },
+    department: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Department',
+    },
     file: [
       {
         fileName: {
           type: String,
         },
-        mimeType: {
-          type: String,
-        },
         filePath: {
-          type: String,
-        },
-        department: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Department',
-        },
-        title: {
-          type: String,
-        },
-        description: {
           type: String,
         },
       },

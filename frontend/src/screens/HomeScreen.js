@@ -6,24 +6,32 @@ import Loader from '../components/Loader'
 import icon from '../folder.svg'
 import Moment from 'react-moment'
 import moment from 'moment'
+import { FaPlus, FaPlusCircle, FaTrash } from 'react-icons/fa'
 import {
   listDocument,
   createDocument,
   deleteDocument,
 } from '../actions/documentActions'
+import { listDepartment } from '../actions/departmentActions'
 import ReactPaginate from 'react-paginate'
 
 import { confirmAlert } from 'react-confirm-alert'
 import { Confirm } from '../components/Confirm'
 
 const HomeScreen = () => {
-  const [patientId, setPatientId] = useState('')
-  const [patientName, setPatientName] = useState('')
+  const [patient_id, setPatientId] = useState('')
+  const [patient_name, setPatientName] = useState('')
+  const [file, setFile] = useState('')
+  const [department, setDepartment] = useState('')
+  const [search, setSearch] = useState('')
 
   const dispatch = useDispatch()
 
   const documentList = useSelector((state) => state.documentList)
   const { loading, error, documents } = documentList
+
+  const departmentList = useSelector((state) => state.departmentList)
+  const { departments, loading: documentLoading } = departmentList
 
   const documentCreate = useSelector((state) => state.documentCreate)
   const {
@@ -41,9 +49,12 @@ const HomeScreen = () => {
   const formCleanHandler = () => {
     setPatientId('')
     setPatientName('')
+    setFile('')
+    setDepartment('')
   }
 
   useEffect(() => {
+    dispatch(listDepartment())
     dispatch(listDocument())
     if (successCreate) {
       formCleanHandler()
@@ -56,9 +67,14 @@ const HomeScreen = () => {
 
   const submitHandler = (e) => {
     e.preventDefault()
-    dispatch(
-      createDocument({ patient_id: patientId, patient_name: patientName })
-    )
+
+    const formData = new FormData()
+    formData.append('patient_id', patient_id)
+    formData.append('patient_name', patient_name)
+    formData.append('department', department)
+    formData.append('file', file)
+
+    dispatch(createDocument(formData))
   }
 
   const [currentPage, setCurrentPage] = useState(1)
@@ -66,8 +82,17 @@ const HomeScreen = () => {
   const itemsPerPage = 12
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
+
+  const patientFiltered =
+    documents &&
+    documents.filter(
+      (doc) =>
+        doc.patient_id.toLowerCase().includes(search.toLowerCase()) ||
+        doc.patient_name.toLowerCase().includes(search.toLowerCase())
+    )
+
   const currentItems =
-    documents && documents.slice(indexOfFirstItem, indexOfLastItem)
+    patientFiltered && patientFiltered.slice(indexOfFirstItem, indexOfLastItem)
   const totalItems = documents && Math.ceil(documents.length / itemsPerPage)
 
   return (
@@ -111,25 +136,64 @@ const HomeScreen = () => {
               ) : (
                 <form onSubmit={submitHandler}>
                   <div className='form-group'>
-                    <label htmlFor='patientId'>Patient ID</label>
+                    <label htmlFor='patient_id'>Patient ID</label>
                     <input
                       type='text'
                       placeholder='Enter patient ID'
                       className='form-control'
-                      value={patientId}
+                      value={patient_id}
                       onChange={(e) => setPatientId(e.target.value)}
                       required
                     />
                   </div>
                   <div className='form-group'>
-                    <label htmlFor='patientName'>Patient Name</label>
+                    <label htmlFor='patient_name'>Patient Name</label>
                     <input
                       type='text'
                       placeholder='Enter patient name'
                       className='form-control'
-                      value={patientName}
+                      value={patient_name}
                       onChange={(e) => setPatientName(e.target.value)}
                       required
+                    />
+                  </div>
+
+                  {documentLoading ? (
+                    <Loader />
+                  ) : (
+                    <div className='form-group'>
+                      <label htmlFor='department'>Department</label>
+                      <select
+                        name='department'
+                        value={department}
+                        onChange={(e) => setDepartment(e.target.value)}
+                        className='form-control'
+                      >
+                        <option value='' disabled>
+                          Department...
+                        </option>
+                        {departments &&
+                          departments.map((department) => {
+                            return (
+                              <option
+                                key={department._id}
+                                value={department._id}
+                              >
+                                {department.name}
+                              </option>
+                            )
+                          })}
+                      </select>
+                    </div>
+                  )}
+
+                  <div className='form-group'>
+                    <label htmlFor='file'>File Upload </label>
+
+                    <input
+                      type='file'
+                      className='form-file-input form-control'
+                      onChange={(e) => setFile(e.target.files[0])}
                     />
                   </div>
 
@@ -143,7 +207,7 @@ const HomeScreen = () => {
                       Close
                     </button>
                     <button type='submit' className='btn btn-primary'>
-                      Update
+                      Add
                     </button>
                   </div>
                 </form>
@@ -154,14 +218,23 @@ const HomeScreen = () => {
       </div>
 
       <div className='d-flex justify-content-between align-items-center'>
-        <h1 className='fs-6'>List of Patients</h1>
-        <button
-          className='btn btn-light btn-sm'
+        <h1 className='fs-6'>Patients</h1>
+        <input
+          type='text'
+          className='form-control shadow-sm rounded-pill'
+          placeholder='Search by patient ID or patient name'
+          name='search'
+          min='0'
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <span
+          className=' ml-1 rounded-pill'
           data-bs-toggle='modal'
           data-bs-target='#editDocumentModal'
         >
-          <i className='fas fa-plus'></i> ADD NEW PATIENT
-        </button>
+          <FaPlusCircle fontSize='45' className='text-success' />
+        </span>
       </div>
 
       {successDelete && (
@@ -214,7 +287,7 @@ const HomeScreen = () => {
                             className='btn btn-danger btn-sm'
                             onClick={() => deleteHandler(patient._id)}
                           >
-                            <i className='fa fa-trash'></i> Delete
+                            <FaTrash /> Delete
                           </button>
                         )}
                       </div>

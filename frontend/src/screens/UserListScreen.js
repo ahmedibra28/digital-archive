@@ -8,6 +8,13 @@ import {
   updateUser,
   register,
 } from '../actions/userActions'
+import {
+  FaCheckCircle,
+  FaEdit,
+  FaPlus,
+  FaTimesCircle,
+  FaTrash,
+} from 'react-icons/fa'
 import ReactPaginate from 'react-paginate'
 
 import { confirmAlert } from 'react-confirm-alert'
@@ -226,7 +233,7 @@ const UserListScreen = () => {
           data-bs-toggle='modal'
           data-bs-target='#editUserModal'
         >
-          <i className='fas fa-plus'></i> REGISTER NEW USER
+          <FaPlus /> REGISTER NEW USER
         </button>
       </div>
 
@@ -261,15 +268,9 @@ const UserListScreen = () => {
                     </td>
                     <td>
                       {user.isAdmin ? (
-                        <i
-                          className='fas fa-check'
-                          style={{ color: 'green' }}
-                        ></i>
+                        <FaCheckCircle className='text-success' />
                       ) : (
-                        <i
-                          className='fas fa-times'
-                          style={{ color: 'red' }}
-                        ></i>
+                        <FaTimesCircle className='text-danger' />
                       )}
                     </td>
                     <td className='btn-group'>
@@ -279,14 +280,14 @@ const UserListScreen = () => {
                         data-bs-toggle='modal'
                         data-bs-target='#editUserModal'
                       >
-                        <i className='fas fa-edit'></i> Edit
+                        <FaEdit /> Edit
                       </button>
 
                       <button
                         className='btn btn-danger btn-sm'
                         onClick={() => deleteHandler(user._id)}
                       >
-                        <i className='fas fa-trash'></i> Delete
+                        <FaTrash /> Delete
                       </button>
                     </td>
                   </tr>
