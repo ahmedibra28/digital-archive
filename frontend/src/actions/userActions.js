@@ -93,12 +93,22 @@ export const logout = () => (dispatch) => {
   dispatch({ type: USER_LIST_RESET })
 }
 
-export const register = (name, email, password) => async (dispatch) => {
+export const register = (name, email, password) => async (
+  dispatch,
+  getState
+) => {
   try {
     dispatch({ type: USER_REGISTER_REQUEST })
 
+    const {
+      userLogin: { userInfo },
+    } = getState()
+
     const config = {
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
     }
 
     await axios.post(`/api/users`, { name, email, password }, config)
